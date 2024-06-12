@@ -20,3 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('create-user', [UserController::class, 'createUser']);
+Route::post('send-credit-to-user', [UserController::class, 'sendCreditToUser']);
+Route::post('get-user-balance', [UserController::class, 'getUserBalance']);
+Route::get('get-all-user-balances', [UserController::class, 'getAllUserBalances']);
