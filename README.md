@@ -1,66 +1,134 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# LedgerApp API
 
-## About Laravel
+## Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+LedgerApp is a simple API that allows users to manage credits, transfer credits between users, and view balances. The API supports role-based authentication, ensuring that only authorized users can perform certain actions.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Endpoints
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 1. Register a New User
 
-## Learning Laravel
+#### Request
+```sh
+curl --location 'http://127.0.0.1:8000/api/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "Test",
+    "email": "test@example.com",
+    "password": "password",
+    "password_confirmation": "password"
+}'
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 2. Add Credits to Users
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+#### Request
+```sh
+curl --location 'http://127.0.0.1:8000/api/admin/add-credits' \
+--header 'Authorization: Bearer ADMIN_TOKEN' \
+--header 'Content-Type: application/json' \
+--data '{
+    "user_id": 2,
+    "amount": 100.00
+}'
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Get All Users' Balances
 
-## Laravel Sponsors
+#### Request
+```sh
+curl --location 'http://127.0.0.1:8000/api/admin/all-balances' \
+--header 'Authorization: Bearer ADMIN_TOKEN'
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 4. Get Individual User's Balance
 
-### Premium Partners
+#### Request
+```sh
+curl --location 'http://127.0.0.1:8000/api/balance' \
+--header 'Authorization: Bearer USER_TOKEN'
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 5. Transfer Credits Between Users
 
-## Contributing
+#### Request
+```sh
+curl --location 'http://127.0.0.1:8000/api/transfer' \
+--header 'Authorization: Bearer USER_TOKEN' \
+--header 'Content-Type: application/json' \
+--data '{
+    "recipient_id": 3,
+    "amount": 50.00
+}'
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 6. Check User's Balance at a Given Time
 
-## Code of Conduct
+#### Request
+```sh
+curl --location 'http://127.0.0.1:8000/api/admin/balance-at-time' \
+--header 'Authorization: Bearer ADMIN_TOKEN' \
+--header 'Content-Type: application/json' \
+--data '{
+    "user_id": 2,
+    "time": "2024-06-30 18:55:17"
+}'
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Authentication and Roles
 
-## Security Vulnerabilities
+- **Admin**: Can add credits to any user, view all users' balances, and check balances at a given time.
+- **User**: Can view their own balance and transfer credits to other users.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Best Practices for High Volume Transactions
+
+The system keeps the `balance` column in the `users` table updated with each transaction. In case of any exception, the process is rolled back to prevent discrepancies between the user's balance and their transaction history.
+
+## Setup and Installation
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/your-repo/ledger-app.git
+    cd ledger-app
+    ```
+
+2. Install dependencies:
+    ```sh
+    composer install
+    ```
+
+3. Copy `.env.example` to `.env` and configure your database:
+    ```sh
+    cp .env.example .env
+    ```
+
+4. Generate application key:
+    ```sh
+    php artisan key:generate
+    ```
+
+5. Run migrations:
+    ```sh
+    php artisan migrate
+    ```
+
+6. Seed the database with roles:
+    ```sh
+    php artisan db:seed --class=RolesTableSeeder
+    ```
+
+## Running the Application
+
+Start the application using Laravel's built-in server:
+```sh
+php artisan serve
+```
+
+## Testing
+
+You can use tools like Postman or cURL to test the endpoints as shown in the examples above.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-source and available under the MIT License.

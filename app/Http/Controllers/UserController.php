@@ -2,60 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateUserRequest;
-use App\Http\Requests\GetUserBalanceRequest;
-use App\Http\Requests\SendCreditToUserRequest;
+use App\Http\Requests\TransferCreditsRequest;
 use App\Services\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
-    /**
-     * @param CreateUserRequest $request
-     * @param UserService $userService
-     * @return JsonResponse
-     */
-    function createUser(CreateUserRequest $request, UserService $userService): JsonResponse
-    {
-        $createdUser = $userService->createUser($request->validated());
+    protected $userService;
 
-        return response()->json(['success' => true, 'message' => 'User has been created successfully.', 'Created User' => $createdUser]);
+    public function __construct(UserService $userService)
+    {
+        $this->middleware('auth:sanctum');
+        $this->userService = $userService;
     }
 
-    /**
-     * @param SendCreditToUserRequest $request
-     * @param UserService $userService
-     * @return JsonResponse
-     */
-    function sendCreditToUser(SendCreditToUserRequest $request, UserService $userService): JsonResponse
+    public function showBalance()
     {
-        $createdBalance = $userService->sendCreditToUser($request->validated());
-
-        return response()->json(['success' => true, 'message' => 'Credit sent to user successfully.', 'Sent Credit' => $createdBalance]);
+        return $this->userService->showBalance();
     }
 
-    /**
-     * @param GetUserBalanceRequest $request
-     * @param UserService $userService
-     * @return JsonResponse
-     */
-    function getUserBalance(GetUserBalanceRequest $request, UserService $userService): JsonResponse
+    public function transferCredits(TransferCreditsRequest $request)
     {
-        $userBalance = $userService->getUserBalance($request->validated());
-
-        return response()->json(['success' => true,  'User Balance' => $userBalance]);
-    }
-
-    /**
-     * @param Request $request
-     * @param UserService $userService
-     * @return JsonResponse
-     */
-    function getAllUserBalances(Request $request, UserService $userService): JsonResponse
-    {
-        $userBalances = $userService->getAllUserBalances();
-
-        return response()->json(['success' => true,  'User Balances' => $userBalances]);
+        return $this->userService->transferCredits($request->recipient_id, $request->amount);
     }
 }
