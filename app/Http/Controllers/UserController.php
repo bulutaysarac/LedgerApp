@@ -4,23 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TransferCreditsRequest;
 use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
-    protected $userService;
-
-    public function __construct(UserService $userService)
+    /**
+     * @param UserService $userService
+     */
+    public function __construct(private readonly UserService $userService)
     {
         $this->middleware('auth:sanctum');
-        $this->userService = $userService;
     }
 
-    public function showBalance()
+    /**
+     * @return JsonResponse
+     */
+    public function showBalance(): JsonResponse
     {
         return $this->userService->showBalance();
     }
 
-    public function transferCredits(TransferCreditsRequest $request)
+    /**
+     * @param TransferCreditsRequest $request
+     * @return JsonResponse
+     */
+    public function transferCredits(TransferCreditsRequest $request): JsonResponse
     {
         return $this->userService->transferCredits($request->recipient_id, $request->amount);
     }

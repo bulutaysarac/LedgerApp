@@ -6,12 +6,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AddCreditsRequest extends FormRequest
 {
-    public function authorize()
+    /**
+     * @return mixed
+     */
+    public function authorize(): mixed
     {
-        return auth()->user()->tokenCan('admin'); // Ensure the user has admin scope
+        return auth()->user()->tokenCan('admin');
     }
 
-    public function rules()
+    /**
+     * @return string[]
+     */
+    public function rules(): array
     {
         return [
             'user_id' => 'required|exists:users,id',

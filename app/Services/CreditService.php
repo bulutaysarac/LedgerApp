@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Transaction;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\ApiResponse;
 use App\Enums\ApiMessage;
@@ -11,7 +12,12 @@ use Exception;
 
 class CreditService
 {
-    public function addCredits(int $userId, float $amount)
+    /**
+     * @param int $userId
+     * @param float $amount
+     * @return JsonResponse
+     */
+    public function addCredits(int $userId, float $amount): JsonResponse
     {
         try {
             $admin = Auth::user();

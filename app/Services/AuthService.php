@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use App\Helpers\ApiResponse;
 use App\Enums\ApiMessage;
@@ -10,7 +11,12 @@ use Exception;
 
 class AuthService
 {
-    public function login(string $email, string $password)
+    /**
+     * @param string $email
+     * @param string $password
+     * @return JsonResponse
+     */
+    public function login(string $email, string $password): JsonResponse
     {
         $user = User::where('email', $email)->first();
 
@@ -23,7 +29,13 @@ class AuthService
         return ApiResponse::success(['token' => $token], ApiMessage::LOGIN_SUCCESS);
     }
 
-    public function register(string $name, string $email, string $password)
+    /**
+     * @param string $name
+     * @param string $email
+     * @param string $password
+     * @return JsonResponse
+     */
+    public function register(string $name, string $email, string $password): JsonResponse
     {
         try {
             $user = User::create([

@@ -6,12 +6,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class TransferCreditsRequest extends FormRequest
 {
-    public function authorize()
+    /**
+     * @return true
+     */
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    /**
+     * @return string[]
+     */
+    public function rules(): array
     {
         return [
             'recipient_id' => 'required|exists:users,id',

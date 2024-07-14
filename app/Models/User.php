@@ -21,6 +21,9 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * @return HasMany
+     */
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);

@@ -7,10 +7,15 @@ use App\Models\Transaction;
 use App\Helpers\ApiResponse;
 use App\Enums\ApiMessage;
 use Exception;
+use Illuminate\Http\JsonResponse;
 
 class BalanceService
 {
-    public function viewBalance(int $userId)
+    /**
+     * @param int $userId
+     * @return JsonResponse
+     */
+    public function viewBalance(int $userId): JsonResponse
     {
         try {
             $user = User::findOrFail($userId);
@@ -25,7 +30,10 @@ class BalanceService
         }
     }
 
-    public function getAllBalances()
+    /**
+     * @return JsonResponse
+     */
+    public function getAllBalances(): JsonResponse
     {
         try {
             $balances = User::all(['id', 'name', 'balance'])->toArray();
@@ -35,7 +43,12 @@ class BalanceService
         }
     }
 
-    public function getBalanceAtTime(int $userId, string $time)
+    /**
+     * @param int $userId
+     * @param string $time
+     * @return JsonResponse
+     */
+    public function getBalanceAtTime(int $userId, string $time): JsonResponse
     {
         try {
             $transactions = Transaction::where('user_id', $userId)
@@ -43,6 +56,7 @@ class BalanceService
                 ->get();
 
             $balance = 0;
+
             foreach ($transactions as $transaction) {
                 if ($transaction->type == 'credit') {
                     $balance += $transaction->amount;
