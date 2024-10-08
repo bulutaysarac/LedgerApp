@@ -22,3 +22,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 // Auth routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/test-ip', function (\Illuminate\Http\Request $request) {
+    return response()->json(['ip' => $request->ips()]);
+});
